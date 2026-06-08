@@ -47,7 +47,7 @@ npx create-fullstack-app@latest my-app --backend express
 npm test
 ```
 
-For local debugging, use the fixed playground app at `/tmp/create-fullstack-app-playground`:
+For local debugging, use the fixed playground app in the repo-local `playground/` directory:
 
 ```bash
 npm run playground:generate

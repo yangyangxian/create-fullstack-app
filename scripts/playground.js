@@ -4,10 +4,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { spawn, spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 import { generateProject } from '../src/index.js';
 
-const DEFAULT_TARGET_DIR = '/tmp/create-fullstack-app-playground';
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const DEFAULT_TARGET_DIR = path.join(REPO_ROOT, 'playground');
 const DEFAULT_BACKEND = 'hono';
 const VALID_COMMANDS = new Set(['generate', 'install', 'dev']);
 
