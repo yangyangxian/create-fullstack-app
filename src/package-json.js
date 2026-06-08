@@ -18,11 +18,11 @@ function rootPackageJson(packageName) {
         'npm run typecheck --workspace packages/contracts && npm run typecheck --workspace packages/schemas && npm run typecheck --workspace packages/shared && npm run typecheck --workspace apps/web && npm run typecheck --workspace apps/api',
     },
     devDependencies: {
-      concurrently: '^9.0.1',
-      typescript: '^5.8.3',
+      concurrently: '^10.0.3',
+      typescript: '^6.0.3',
     },
     engines: {
-      node: '>=18',
+      node: '>=22.12.0',
     },
   });
 }
@@ -91,15 +91,15 @@ function webPackageJson() {
       typecheck: 'tsc --noEmit -p tsconfig.json',
     },
     dependencies: {
-      react: '^18.3.1',
-      'react-dom': '^18.3.1',
-      'react-router-dom': '^6.30.1',
+      react: '^19.2.7',
+      'react-dom': '^19.2.7',
+      'react-router-dom': '^7.17.0',
     },
     devDependencies: {
-      '@types/react': '^18.3.12',
-      '@types/react-dom': '^18.3.1',
-      '@vitejs/plugin-react': '^4.3.4',
-      vite: '^5.4.11',
+      '@types/react': '^19.2.17',
+      '@types/react-dom': '^19.2.3',
+      '@vitejs/plugin-react': '^6.0.2',
+      vite: '^8.0.16',
     },
   });
 }
@@ -108,23 +108,23 @@ function apiPackageJson(backend) {
   const dependencies =
     backend === 'hono'
       ? {
-          '@hono/node-server': '^1.13.8',
-          hono: '^4.6.15',
+          '@hono/node-server': '^2.0.4',
+          hono: '^4.12.24',
         }
       : {
-          express: '^4.21.2',
+          express: '^5.2.1',
         };
 
   const devDependencies =
     backend === 'hono'
       ? {
-          '@types/node': '^22.10.2',
-          tsx: '^4.19.2',
+          '@types/node': '^25.9.2',
+          tsx: '^4.22.4',
         }
       : {
-          '@types/express': '^5.0.0',
-          '@types/node': '^22.10.2',
-          tsx: '^4.19.2',
+          '@types/express': '^5.0.6',
+          '@types/node': '^25.9.2',
+          tsx: '^4.22.4',
         };
 
   return stringifyPackageJson({

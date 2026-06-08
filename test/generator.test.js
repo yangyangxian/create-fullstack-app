@@ -25,10 +25,10 @@ test('generates a Hono project with the expected workspace layout', async () => 
   const webPackage = await readJson(path.join(target, 'apps/web/package.json'));
 
   assert.deepEqual(rootPackage.workspaces, ['apps/*', 'packages/*']);
-  assert.equal(apiPackage.dependencies.hono, '^4.6.15');
+  assert.equal(apiPackage.dependencies.hono, '^4.12.24');
   assert.match(apiSource, /new Hono\(\)/);
-  assert.equal(webPackage.dependencies['react-router-dom'], '^6.30.1');
-  assert.equal(webPackage.devDependencies.vite, '^5.4.11');
+  assert.equal(webPackage.dependencies['react-router-dom'], '^7.17.0');
+  assert.equal(webPackage.devDependencies.vite, '^8.0.16');
 });
 
 test('generates an Express project with the expected backend scaffold', async () => {
@@ -44,7 +44,7 @@ test('generates an Express project with the expected backend scaffold', async ()
   const apiSource = await fs.readFile(path.join(target, 'apps/api/src/index.ts'), 'utf8');
   const contractsSource = await fs.readFile(path.join(target, 'packages/contracts/src/index.ts'), 'utf8');
 
-  assert.equal(apiPackage.dependencies.express, '^4.21.2');
+  assert.equal(apiPackage.dependencies.express, '^5.2.1');
   assert.match(apiSource, /express\(\)/);
   assert.match(apiSource, /backend: 'express'/);
   assert.match(contractsSource, /export type BackendKind = 'express'/);
