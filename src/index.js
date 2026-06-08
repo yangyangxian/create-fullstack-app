@@ -293,6 +293,7 @@ function apiTsconfig() {
         moduleResolution: 'NodeNext',
         outDir: 'dist',
         rootDir: 'src',
+        types: ['node'],
       },
       include: ['src'],
     },
@@ -302,7 +303,7 @@ function apiTsconfig() {
 }
 
 function expressServer(projectName) {
-  return `import express from 'express';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\nimport fs from 'node:fs';\n\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst app = express();\nconst port = Number(process.env.PORT ?? 3000);\nconst webDist = path.resolve(__dirname, '../../web/dist');\nconst indexHtml = path.join(webDist, 'index.html');\n\napp.get('/api/health', (_req, res) => {\n  res.json({\n    ok: true,\n    backend: 'express',\n    message: '${projectName} is running with an Express backend.',\n  });\n});\n\nif (fs.existsSync(webDist)) {\n  app.use(express.static(webDist));\n\n  app.get('*', (req, res) => {\n    if (req.path.startsWith('/api/')) {\n      res.status(404).json({ ok: false, message: 'Not found' });\n      return;\n    }\n\n    res.sendFile(indexHtml);\n  });\n} else {\n  app.get('/', (_req, res) => {\n    res.type('text/plain').send('Frontend assets are not built yet. Run "npm run build --workspace apps/web" or "npm run dev".');\n  });\n}\n\napp.listen(port, () => {\n  console.log(\`API server listening on http://localhost:\${port}\`);\n});\n`;
+  return `import express from 'express';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\nimport fs from 'node:fs';\n\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst app = express();\nconst port = Number(process.env.PORT ?? 3000);\nconst webDist = path.resolve(__dirname, '../../web/dist');\nconst indexHtml = path.join(webDist, 'index.html');\n\napp.get('/api/health', (_req, res) => {\n  res.json({\n    ok: true,\n    backend: 'express',\n    message: '${projectName} is running with an Express backend.',\n  });\n});\n\nif (fs.existsSync(webDist)) {\n  app.use(express.static(webDist));\n\n  app.get(/.*/, (req, res) => {\n    if (req.path.startsWith('/api/')) {\n      res.status(404).json({ ok: false, message: 'Not found' });\n      return;\n    }\n\n    res.sendFile(indexHtml);\n  });\n} else {\n  app.get('/', (_req, res) => {\n    res.type('text/plain').send('Frontend assets are not built yet. Run "npm run build --workspace apps/web" or "npm run dev".');\n  });\n}\n\napp.listen(port, () => {\n  console.log(\`API server listening on http://localhost:\${port}\`);\n});\n`;
 }
 
 function honoServer(projectName) {
