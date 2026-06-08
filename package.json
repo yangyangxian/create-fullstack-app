@@ -9,9 +9,9 @@
   "main": "./src/index.js",
   "scripts": {
     "test": "node --test",
-    "playground:generate": "node ./scripts/playground.js generate",
-    "playground:install": "node ./scripts/playground.js install",
-    "playground:dev": "node ./scripts/playground.js dev"
+    "generate": "node ./scripts/playground.js generate",
+    "install": "node ./scripts/playground.js install",
+    "dev": "node ./scripts/playground.js dev"
   },
   "keywords": [
     "cli",
