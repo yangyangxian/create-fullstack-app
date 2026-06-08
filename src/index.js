@@ -15,12 +15,26 @@ const BACKENDS = {
 };
 
 function toPackageName(value) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-_]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/-{2,}/g, '-');
+  let normalized = '';
+  let previousWasDash = false;
+
+  for (const character of value.trim().toLowerCase()) {
+    const isAlphaNumeric =
+      (character >= 'a' && character <= 'z') || (character >= '0' && character <= '9');
+
+    if (isAlphaNumeric || character === '_') {
+      normalized += character;
+      previousWasDash = false;
+      continue;
+    }
+
+    if (!previousWasDash) {
+      normalized += '-';
+      previousWasDash = true;
+    }
+  }
+
+  return normalized.replace(/^-/, '').replace(/-$/, '');
 }
 
 function toTitle(value) {

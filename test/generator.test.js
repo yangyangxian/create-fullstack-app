@@ -4,7 +4,7 @@ const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
 
-const { generateProject } = require('../src/index');
+const { generateProject, toPackageName } = require('../src/index');
 
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, 'utf8'));
@@ -48,4 +48,9 @@ test('generates an Express project with the expected backend scaffold', async ()
   assert.match(apiSource, /express\(\)/);
   assert.match(apiSource, /backend: 'express'/);
   assert.match(contractsSource, /export type BackendKind = 'express'/);
+});
+
+test('sanitizes package names without pathological regex backtracking', () => {
+  assert.equal(toPackageName('---My   App---Name___'), 'my-app-name___');
+  assert.equal(toPackageName('@@@'), '');
 });
