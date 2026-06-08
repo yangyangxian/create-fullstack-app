@@ -3,6 +3,15 @@ import path from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
 import { createInterface } from 'node:readline/promises';
 
+import {
+  apiPackageJson,
+  contractsPackageJson,
+  rootPackageJson,
+  schemasPackageJson,
+  sharedPackageJson,
+  webPackageJson,
+} from './package-json.js';
+
 const BACKENDS = {
   hono: {
     label: 'Hono (serverless-oriented)',
@@ -189,35 +198,6 @@ function ensureTargetDirectory(targetDirectory) {
   }
 }
 
-function rootPackageJson(packageName) {
-  return JSON.stringify(
-    {
-      name: packageName,
-      private: true,
-      version: '0.1.0',
-      workspaces: ['apps/*', 'packages/*'],
-      scripts: {
-        dev: 'concurrently -n web,api -c cyan,green "npm run dev --workspace apps/web" "npm run dev --workspace apps/api"',
-        'dev:web': 'npm run dev --workspace apps/web',
-        'dev:api': 'npm run dev --workspace apps/api',
-        build:
-          'npm run build --workspace packages/contracts && npm run build --workspace packages/schemas && npm run build --workspace packages/shared && npm run build --workspace apps/web && npm run build --workspace apps/api',
-        check:
-          'npm run typecheck --workspace packages/contracts && npm run typecheck --workspace packages/schemas && npm run typecheck --workspace packages/shared && npm run typecheck --workspace apps/web && npm run typecheck --workspace apps/api',
-      },
-      devDependencies: {
-        concurrently: '^9.0.1',
-        typescript: '^5.8.3',
-      },
-      engines: {
-        node: '>=18',
-      },
-    },
-    null,
-    2,
-  );
-}
-
 function tsconfigBase() {
   return JSON.stringify(
     {
@@ -253,109 +233,16 @@ function workspaceTsconfig(include) {
   );
 }
 
-function contractsPackageJson() {
-  return JSON.stringify(
-    {
-      name: '@repo/contracts',
-      private: true,
-      version: '0.1.0',
-      type: 'module',
-      exports: {
-        '.': './dist/index.js',
-      },
-      types: './dist/index.d.ts',
-      scripts: {
-        build: 'tsc -p tsconfig.json',
-        typecheck: 'tsc --noEmit -p tsconfig.json',
-      },
-    },
-    null,
-    2,
-  );
-}
-
 function contractsIndex(backend) {
   return `export type BackendKind = '${backend}';\n\nexport interface HealthResponse {\n  ok: true;\n  backend: BackendKind;\n  message: string;\n}\n`;
-}
-
-function schemasPackageJson() {
-  return JSON.stringify(
-    {
-      name: '@repo/schemas',
-      private: true,
-      version: '0.1.0',
-      type: 'module',
-      exports: {
-        '.': './dist/index.js',
-      },
-      types: './dist/index.d.ts',
-      scripts: {
-        build: 'tsc -p tsconfig.json',
-        typecheck: 'tsc --noEmit -p tsconfig.json',
-      },
-    },
-    null,
-    2,
-  );
 }
 
 function schemasIndex() {
   return `export const appShape = {\n  apps: ['web', 'api'],\n  packages: ['shared', 'contracts', 'schemas'],\n} as const;\n`;
 }
 
-function sharedPackageJson() {
-  return JSON.stringify(
-    {
-      name: '@repo/shared',
-      private: true,
-      version: '0.1.0',
-      type: 'module',
-      exports: {
-        '.': './dist/index.js',
-      },
-      types: './dist/index.d.ts',
-      scripts: {
-        build: 'tsc -p tsconfig.json',
-        typecheck: 'tsc --noEmit -p tsconfig.json',
-      },
-    },
-    null,
-    2,
-  );
-}
-
 function sharedIndex(projectName, backend) {
   return `export const appInfo = {\n  name: '${projectName}',\n  backend: '${backend}',\n  frontend: 'vite + react router',\n} as const;\n`;
-}
-
-function webPackageJson() {
-  return JSON.stringify(
-    {
-      name: 'web',
-      private: true,
-      version: '0.1.0',
-      type: 'module',
-      scripts: {
-        dev: 'vite',
-        build: 'vite build',
-        preview: 'vite preview',
-        typecheck: 'tsc --noEmit -p tsconfig.json',
-      },
-      dependencies: {
-        react: '^18.3.1',
-        'react-dom': '^18.3.1',
-        'react-router-dom': '^6.30.1',
-      },
-      devDependencies: {
-        '@types/react': '^18.3.12',
-        '@types/react-dom': '^18.3.1',
-        '@vitejs/plugin-react': '^4.3.4',
-        vite: '^5.4.11',
-      },
-    },
-    null,
-    2,
-  );
 }
 
 function webTsconfig() {
@@ -395,60 +282,6 @@ function webApp(projectName, backend) {
 
 function webStyles() {
   return `:root {\n  color-scheme: light dark;\n  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;\n  line-height: 1.5;\n  font-weight: 400;\n  background: #0f172a;\n  color: #e2e8f0;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  min-width: 320px;\n  min-height: 100vh;\n  background: radial-gradient(circle at top, #1e293b, #0f172a 55%);\n}\n\na {\n  color: inherit;\n}\n\n.layout {\n  max-width: 960px;\n  margin: 0 auto;\n  padding: 3rem 1.5rem 4rem;\n}\n\n.hero {\n  margin-bottom: 2rem;\n}\n\n.eyebrow {\n  text-transform: uppercase;\n  letter-spacing: 0.14em;\n  font-size: 0.8rem;\n  color: #38bdf8;\n}\n\n.card-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1rem;\n}\n\n.card {\n  padding: 1.25rem;\n  border-radius: 1rem;\n  background: rgba(15, 23, 42, 0.8);\n  border: 1px solid rgba(148, 163, 184, 0.22);\n}\n\n.card h2 {\n  margin-top: 0;\n}\n\n.nav {\n  display: flex;\n  gap: 1rem;\n  margin-top: 2rem;\n}\n`;
-}
-
-function apiPackageJson(backend) {
-  if (backend === 'hono') {
-    return JSON.stringify(
-      {
-        name: 'api',
-        private: true,
-        version: '0.1.0',
-        type: 'module',
-        scripts: {
-          dev: 'tsx watch src/index.ts',
-          build: 'tsc -p tsconfig.json',
-          start: 'node dist/index.js',
-          typecheck: 'tsc --noEmit -p tsconfig.json',
-        },
-        dependencies: {
-          '@hono/node-server': '^1.13.8',
-          hono: '^4.6.15',
-        },
-        devDependencies: {
-          '@types/node': '^22.10.2',
-          tsx: '^4.19.2',
-        },
-      },
-      null,
-      2,
-    );
-  }
-
-  return JSON.stringify(
-    {
-      name: 'api',
-      private: true,
-      version: '0.1.0',
-      type: 'module',
-      scripts: {
-        dev: 'tsx watch src/index.ts',
-        build: 'tsc -p tsconfig.json',
-        start: 'node dist/index.js',
-        typecheck: 'tsc --noEmit -p tsconfig.json',
-      },
-      dependencies: {
-        express: '^4.21.2',
-      },
-      devDependencies: {
-        '@types/express': '^5.0.0',
-        '@types/node': '^22.10.2',
-        tsx: '^4.19.2',
-      },
-    },
-    null,
-    2,
-  );
 }
 
 function apiTsconfig() {
