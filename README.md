@@ -46,3 +46,13 @@ npx create-fullstack-app@latest my-app --backend express
 ```bash
 npm test
 ```
+
+For local debugging, use the fixed playground app at `/tmp/create-fullstack-app-playground`:
+
+```bash
+npm run playground:generate
+npm run playground:install -- --backend express
+npm run playground:dev -- --backend hono
+```
+
+The playground commands delete and regenerate that sandbox before each run, so you can iterate on generator templates without manually recreating a test app.

@@ -1,10 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 import { generateProject, toPackageName } from '../src/index.js';
+
+const execFileAsync = promisify(execFile);
+const playgroundScript = fileURLToPath(new URL('../scripts/playground.js', import.meta.url));
 
 async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, 'utf8'));
@@ -57,4 +63,26 @@ test('generates an Express project with the expected backend scaffold', async ()
 test('sanitizes package names without pathological regex backtracking', () => {
   assert.equal(toPackageName('---My   App---Name___'), 'my-app-name___');
   assert.equal(toPackageName('@@@'), '');
+});
+
+test('playground helper regenerates a fixed target directory', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'create-fullstack-app-playground-'));
+  const target = path.join(root, 'playground-app');
+
+  await execFileAsync(process.execPath, [playgroundScript, 'generate', '--target-dir', target]);
+  await fs.writeFile(path.join(target, 'marker.txt'), 'temp', 'utf8');
+
+  await execFileAsync(process.execPath, [
+    playgroundScript,
+    'generate',
+    '--target-dir',
+    target,
+    '--backend',
+    'express',
+  ]);
+
+  await assert.rejects(fs.access(path.join(target, 'marker.txt')));
+
+  const apiPackage = await readJson(path.join(target, 'apps/api/package.json'));
+  assert.equal(apiPackage.dependencies.express, '^5.2.1');
 });
