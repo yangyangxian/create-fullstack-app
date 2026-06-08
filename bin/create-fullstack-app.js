@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { runCli } = require('../src/index');
+import { runCli } from '../src/index.js';
 
 runCli().catch((error) => {
   console.error(`\nError: ${error.message}`);

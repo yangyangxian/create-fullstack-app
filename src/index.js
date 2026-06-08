@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { stdin: input, stdout: output } = require('node:process');
-const { createInterface } = require('node:readline/promises');
+import fs from 'node:fs';
+import path from 'node:path';
+import { stdin as input, stdout as output } from 'node:process';
+import { createInterface } from 'node:readline/promises';
 
 const BACKENDS = {
   hono: {
@@ -542,7 +542,7 @@ async function runCli(argv = process.argv.slice(2)) {
   output.write(`Next steps:\n  cd ${resolved.projectName}\n  npm install\n  npm run dev\n`);
 }
 
-module.exports = {
+export {
   BACKENDS,
   buildTemplateFiles,
   generateProject,
