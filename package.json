@@ -1,0 +1,38 @@
+{
+  "name": "create-fullstack-app",
+  "version": "0.1.0",
+  "description": "CLI generator for full-stack apps with Vite, React Router, and Hono or Express backends.",
+  "bin": {
+    "create-fullstack-app": "./bin/create-fullstack-app.js"
+  },
+  "type": "module",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "node --test",
+    "generate": "node ./scripts/playground.js generate",
+    "install": "node ./scripts/playground.js install",
+    "dev": "node ./scripts/playground.js dev"
+  },
+  "keywords": [
+    "cli",
+    "scaffold",
+    "vite",
+    "react-router",
+    "hono",
+    "express",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yangyangxian/create-fullstack-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yangyangxian/create-fullstack-app/issues"
+  },
+  "homepage": "https://github.com/yangyangxian/create-fullstack-app#readme",
+  "engines": {
+    "node": ">=18"
+  }
+}
